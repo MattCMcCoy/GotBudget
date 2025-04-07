@@ -15,11 +15,45 @@ struct ContentView: View {
     var body: some View {
         NavigationSplitView {
             List {
+                NavigationLink {
+                   
+                } label: {
+                    Text("Dashboard")
+                        .font(.subheadline)
+                        .fontWeight(.heavy)
+                }
+                NavigationLink {
+                    Accounts()
+                } label: {
+                    Text("Accounts")
+                        .font(.subheadline)
+                        .fontWeight(.heavy)
+                }
                     NavigationLink {
                         Text("Transactions")
                     } label: {
                         Text("Transactions")
+                            .font(.subheadline)
+                            .fontWeight(.heavy)
                     }
+                NavigationLink {
+                    Text("Categories")
+                } label: {
+                    Text("Categories")
+                        .font(.subheadline)
+                        .font(.subheadline)
+                        .fontWeight(.heavy)
+                }
+                Text("Accounts")
+                    .font(.caption)
+                    .fontWeight(.black)
+                    .foregroundColor(Color.gray)
+                Text("Credit Cards")
+                    .font(.caption)
+                    .fontWeight(.black)
+                    .foregroundColor(Color.gray)
+                    
+                
             }
         } detail: {
             Text("Select an item")
