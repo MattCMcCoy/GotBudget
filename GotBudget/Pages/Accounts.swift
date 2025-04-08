@@ -9,47 +9,67 @@ import SwiftUI
 import SwiftData
 import Charts
 
-/// The second type of a view that accepts and shows a string
 struct Accounts: View {
-
-    struct ProfitOverTime {
-        var date: Date
-        var profit: Double
-    }
-
-
-    let departmentAProfit: [ProfitOverTime] = [ProfitOverTime(date: Date.now, profit: 20), ProfitOverTime(date: Date.now + 1, profit: 10000)]
-    
-    let departmentBProfit: [ProfitOverTime] = [ProfitOverTime(date: Date.now, profit: 20), ProfitOverTime(date: Date.now + 1, profit: 400)]
+    @State private var selectedDate: Date?
+    private let revenueHistory = mockHistory()
+    private let gradient = Gradient(stops: [
+      .init(color: .teal, location: 0),
+      .init(color: .teal.opacity(0), location: 0.9)
+    ])
     
     var body: some View {
-        Chart {
-            ForEach(departmentAProfit, id: \.date) { item in
-                LineMark(
-                    x: .value("Date", item.date),
-                    y: .value("Profit A", item.profit),
-                    series: .value("Company", "A")
-                )
-                .foregroundStyle(.green)
-            }
-            ForEach(departmentBProfit, id: \.date) { item in
-                LineMark(
-                    x: .value("Date", item.date),
-                    y: .value("Profit B", item.profit),
-                    series: .value("Company", "B")
-                )
-                .foregroundStyle(.orange)
-            }
-        }
-        .frame(width: /*@START_MENU_TOKEN@*/300.0/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100.0/*@END_MENU_TOKEN@*/)
-        Text("Credit Cards")
-            .font(.body)
-            .fontWeight(.light)
-            .foregroundColor(Color.gray)
-            .multilineTextAlignment(.leading)
-            .padding(/*@START_MENU_TOKEN@*/)
+      VStack {
+          Chart {
+              ForEach (revenueHistory) {  revenue in
+                  // For gradient effect under the line chart
+                  AreaMark(
+                    x: .value("Date", revenue.date),
+                    y: .value("Revenue", revenue.value)
+                  )
+                  .interpolationMethod(.cardinal)
+                  .foregroundStyle(gradient)
+                  
+                  // Line chart
+                  LineMark(
+                    x: .value("Date", revenue.date),
+                    y: .value("Revenue", revenue.value)
+                  )
+                  .lineStyle(StrokeStyle(lineWidth: 4, lineCap: .round))
+                  .interpolationMethod(.cardinal)
+              }
+          }
+        .padding()
+        .foregroundStyle(.white)
+        .frame(width: 400, height: 200)
+        .cornerRadius(24)
+        Spacer()
+      }
     }
-}
+    
+    static func mockHistory() -> [Revenue] {
+      return [
+        .init(date: daysFromNow(1), value: 6000),
+        .init(date: daysFromNow(2), value: 9000),
+        .init(date: daysFromNow(3), value: 4000),
+        .init(date: daysFromNow(4), value: 10000),
+        .init(date: daysFromNow(5), value: 12000),
+        .init(date: daysFromNow(6), value: 14000),
+        .init(date: daysFromNow(7), value: 16000),
+        .init(date: daysFromNow(8), value: 17000)
+      ]
+    }
+    
+    static func daysFromNow(_ days: Int) -> Date {
+      Calendar.current.date(byAdding: .day, value: days, to: .now)!
+    }
+    
+  }
+
+  struct Revenue: Identifiable {
+    var id: Date { date }
+    let date: Date
+    let value: Double
+  }
 
 #Preview {
     ContentView()

@@ -16,7 +16,7 @@ struct ContentView: View {
         NavigationSplitView {
             List {
                 NavigationLink {
-                   
+                    Dashboard()                .navigationTitle(Text("Dashboard"))
                 } label: {
                     Text("Dashboard")
                         .font(.subheadline)
@@ -24,20 +24,21 @@ struct ContentView: View {
                 }
                 NavigationLink {
                     Accounts()
+                        .navigationTitle(Text("Accounts"))
                 } label: {
                     Text("Accounts")
                         .font(.subheadline)
                         .fontWeight(.heavy)
                 }
                     NavigationLink {
-                        Text("Transactions")
+
                     } label: {
                         Text("Transactions")
                             .font(.subheadline)
                             .fontWeight(.heavy)
                     }
                 NavigationLink {
-                    Text("Categories")
+                    
                 } label: {
                     Text("Categories")
                         .font(.subheadline)
@@ -56,7 +57,7 @@ struct ContentView: View {
                 
             }
         } detail: {
-            Text("Select an item")
+            Dashboard()
         }
     }
 
