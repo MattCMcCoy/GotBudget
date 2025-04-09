@@ -43,7 +43,13 @@ struct Accounts: View {
         .frame(width: 400, height: 200)
         .cornerRadius(24)
         Spacer()
+          Button("Add Account", systemImage: "plus", action: addAccount)
+              .labelStyle(.iconOnly)
       }
+    }
+    
+    func addAccount() {
+        
     }
     
     static func mockHistory() -> [Revenue] {

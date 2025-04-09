@@ -5,79 +5,89 @@
 //  Created by Matt McCoy on 4/7/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Query private var accounts: [Account]
 
     var body: some View {
         NavigationSplitView {
             List {
                 NavigationLink {
-                    Dashboard()                .navigationTitle(Text("Dashboard"))
+                    Dashboard()
                 } label: {
-                    Text("Dashboard")
-                        .font(.subheadline)
-                        .fontWeight(.heavy)
+                    Label("Dashboard", systemImage: "house")
                 }
                 NavigationLink {
                     Accounts()
-                        .navigationTitle(Text("Accounts"))
                 } label: {
-                    Text("Accounts")
-                        .font(.subheadline)
-                        .fontWeight(.heavy)
+                    Label("Accounts", systemImage: "figure.walk")
                 }
-                    NavigationLink {
-
-                    } label: {
-                        Text("Transactions")
-                            .font(.subheadline)
-                            .fontWeight(.heavy)
-                    }
                 NavigationLink {
-                    
+                    Budget()
                 } label: {
-                    Text("Categories")
-                        .font(.subheadline)
-                        .font(.subheadline)
-                        .fontWeight(.heavy)
+                    Label("Budget", systemImage: "leaf")
                 }
-                Text("Accounts")
+                #if os(macOS)
+                Text("My Accounts")
                     .font(.caption)
                     .fontWeight(.black)
                     .foregroundColor(Color.gray)
-                Text("Credit Cards")
-                    .font(.caption)
-                    .fontWeight(.black)
-                    .foregroundColor(Color.gray)
-                    
-                
+                ForEach(accounts) {
+                    account in
+                    NavigationLink {
+                        Text(
+                            "Item at \(account.bank)"
+                        )
+                    } label: {
+                        Text(account.bank)
+                    }
+                }
+                .onDelete(perform: deleteItems)
+                #endif
+            }
+            #if os(macOS)
+                .navigationSplitViewColumnWidth(min: 180, ideal: 200)
+            #endif
+            .toolbar {
+                #if os(iOS)
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        EditButton()
+                    }
+                #endif
+                ToolbarItem {
+                    Button(action: addItem) {
+                        Label("Add Account", systemImage: "plus")
+                    }
+                }
             }
         } detail: {
-            Dashboard()
+            Text("Select an account")
         }
     }
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
+            let newAccount = Account(
+                bank: "BofA", name: "Checking", balance: 1234.56)
+            modelContext.insert(newAccount)
+            try? modelContext.save()
         }
     }
 
-    private func deleteItems(offsets: IndexSet) {
+    private func deleteItems(at offsets: IndexSet) {
         withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+            for offset in offsets {
+                modelContext.delete(accounts[offset])
             }
+            try? modelContext.save()
         }
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: Account.self, inMemory: true)
 }
